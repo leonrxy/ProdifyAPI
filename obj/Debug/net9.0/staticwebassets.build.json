@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "af20ZAqaTz136gQp2JCfrZrGNcsyym7e6b9tguQusT0=",
+  "Source": "prodify",
+  "BasePath": "_content/prodify",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
