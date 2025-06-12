@@ -33,9 +33,9 @@ namespace Prodify.Dtos
 
         public PaginatedResponseDto(List<T> items, int count, int page_number, int page_size)
         {
-            page_number = page_number;
+            this.page_number = page_number;
             total_pages = (int)Math.Ceiling(count / (double)page_size);
-            page_size = page_size;
+            this.page_size = page_size;
             total_count = count;
             previous_page_url = page_number > 1 ? $"?page_number={page_number - 1}&page_size={page_size}" : "";
             next_page_url = page_number < total_pages ? $"?page_number={page_number + 1}&page_size={page_size}" : "";

@@ -31,7 +31,7 @@ namespace Prodify.Controllers
             try
             {
                 var user = await _service.GetByIdAsync(id);
-                return Ok(ResponseFactory.Success(user));
+                return Ok(ResponseFactory.Success(user, "User retrieved successfully"));
             }
             catch (KeyNotFoundException ex)
             {
@@ -46,7 +46,7 @@ namespace Prodify.Controllers
             {
                 var user = await _service.CreateAsync(request);
                 return CreatedAtAction(nameof(GetById), new { id = user.id },
-                    ResponseFactory.Success(user, "User berhasil dibuat"));
+                    ResponseFactory.Success(user, "User created successfully"));
             }
             catch (InvalidOperationException ex)
             {
@@ -60,7 +60,7 @@ namespace Prodify.Controllers
             try
             {
                 await _service.UpdateAsync(id, request);
-                return Ok(ResponseFactory.Success<object>("User berhasil diperbarui"));
+                return Ok(ResponseFactory.Success<object>("User updated successfully"));
             }
             catch (KeyNotFoundException ex)
             {
@@ -74,7 +74,7 @@ namespace Prodify.Controllers
             try
             {
                 await _service.DeleteAsync(id);
-                return Ok(ResponseFactory.Success<object>("User berhasil dihapus"));
+                return Ok(ResponseFactory.Success<object>("User deleted successfully"));
             }
             catch (KeyNotFoundException ex)
             {
