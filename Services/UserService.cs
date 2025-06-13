@@ -1,8 +1,4 @@
 using Microsoft.Extensions.Options;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Prodify.Repositories;
 using Prodify.Helpers;
 using Prodify.Models;
@@ -16,8 +12,6 @@ namespace Prodify.Services
 
     public interface IUserService
     {
-        Task<User> RegisterAsync(string email, string password, string role);
-        Task<string> AuthenticateAsync(string email, string password);
         Task<PaginatedResponseDto<ListDto>> GetPaginatedAsync(UserPaginatedRequest request);
         Task<DetailDto> GetByIdAsync(string id);
         Task CreateAsync(CreateUserRequestDto request);
@@ -46,52 +40,7 @@ namespace Prodify.Services
             _mapper = mapper;
 
         }
-
-        public async Task<User> RegisterAsync(string email, string password, string role)
-        {
-            if (await _uow.User.GetByEmailAsync(email) != null)
-                throw new Exception("Email already in use");
-
-            var user = new User
-            {
-                Email = email,
-                Password = _hasher.Hash(password),
-                Role = role
-            };
-
-            await _uow.User.CreateAsync(user);
-            return user;
-        }
-
-        public async Task<string> AuthenticateAsync(string email, string password)
-        {
-            var user = await _uow.User.GetByEmailAsync(email)
-                       ?? throw new Exception("Invalid credentials");
-
-            if (!_hasher.Verify(password, user.Password))
-                throw new Exception("Invalid credentials");
-
-            // Buat JWT
-            var claims = new[] {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.SecretKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: _jwt.Issuer,
-                audience: _jwt.Audience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(2),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
+        
         public async Task<PaginatedResponseDto<ListDto>> GetPaginatedAsync(UserPaginatedRequest request)
         {
             var user = await _uow.User.GetPaginatedAsync(request);

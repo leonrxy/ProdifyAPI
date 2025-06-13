@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Prodify.Services;
 
@@ -5,15 +6,15 @@ using Prodify.Services;
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
-    private readonly IUserService _userSvc;
-    public AuthController(IUserService userSvc) => _userSvc = userSvc;
+    private readonly IAuthService _auth;
+    public AuthController(IAuthService authService) => _auth = authService;
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
     {
         try
         {
-            var token = await _userSvc.AuthenticateAsync(dto.Email, dto.Password);
+            var token = await _auth.AuthenticateAsync(dto.Email, dto.Password);
             return Ok(new { token });
         }
         catch (Exception ex)
@@ -23,10 +24,11 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("logout")]
+    [Authorize]
     public IActionResult Logout()
     {
         // Untuk logout, biasanya cukup hapus token di client
         // Di sini kita hanya mengembalikan OK
-        return Ok(new { message = "Logout successful" });
+        return Ok(new { status = "success", message = "Logout successful" });
     }
 }
