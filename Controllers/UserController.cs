@@ -1,14 +1,15 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Prodify.Common;
 using Prodify.Dtos;
-using Prodify.Requests;
 using Prodify.Services;
 
 namespace Prodify.Controllers
 {
     [ApiController]
     [Route("api/users")]
+    [Authorize(Roles = "superadmin, admin")]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _service;
@@ -40,6 +41,7 @@ namespace Prodify.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "superadmin")]
         public async Task<IActionResult> Create([FromBody] CreateUserRequestDto request)
         {
             try
@@ -54,6 +56,7 @@ namespace Prodify.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "superadmin")]
         public async Task<IActionResult> Update(string id, [FromBody] UpdateUserRequestDto request)
         {
             try
@@ -68,6 +71,7 @@ namespace Prodify.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "superadmin")]
         public async Task<IActionResult> Delete(string id)
         {
             try

@@ -15,8 +15,7 @@ namespace Prodify.Seeders
         {
             var users = db.GetCollection<User>("users");
 
-            // Cek jika sudah ada user Admin
-            var exists = await users.Find(u => u.role == "Admin")
+            var exists = await users.Find(u => u.Role == "superadmin")
                                     .AnyAsync();
             if (exists) return;
 
@@ -24,37 +23,37 @@ namespace Prodify.Seeders
             var now = DateTime.UtcNow;
             var superadmin = new User
             {
-                email = "superadmin@mail.com",
-                username = "superadmin",
-                name = "Super Administrator",
-                password = hasher.Hash("superadmin123"),
-                role = "superadmin",
-                created_at = now,
-                updated_at = now
+                Email = "superadmin@mail.com",
+                Username = "superadmin",
+                Name = "Super Administrator",
+                Password = hasher.Hash("superadmin123"),
+                Role = "superadmin",
+                CreatedAt = now,
+                UpdatedAt = now
             };
 
             // admin
             var admin = new User
             {
-                email = "admin@mail.com",
-                username = "admin",
-                name = "Administrator",
-                password = hasher.Hash("admin123"),
-                role = "admin",
-                created_at = now,
-                updated_at = now
+                Email = "admin@mail.com",
+                Username = "admin",
+                Name = "Administrator",
+                Password = hasher.Hash("admin123"),
+                Role = "admin",
+                CreatedAt = now,
+                UpdatedAt = now
             };
 
             // user
             var user = new User
             {
-                email = "user@mail.com",
-                username = "user",
-                name = "User",
-                password = hasher.Hash("user123"),
-                role = "user",
-                created_at = now,
-                updated_at = now
+                Email = "user@mail.com",
+                Username = "user",
+                Name = "User",
+                Password = hasher.Hash("user123"),
+                Role = "user",
+                CreatedAt = now,
+                UpdatedAt = now
             };
 
             await users.InsertManyAsync(new[] { superadmin, admin, user });

@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -15,13 +16,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMongo(builder.Configuration);
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
+builder.Services.Configure<FileStorageOptions>(opt =>
+{
+    opt.UploadsFolder = "uploads";                 // folder dasar
+});
+
 // REPOSITORY
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 // SERVICE
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
 // HELPERS
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
@@ -30,7 +39,14 @@ builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(opts =>
+    {
+        opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        opts.JsonSerializerOptions.PropertyNamingPolicy = new SnakeCaseNamingUtility();
+
+        opts.JsonSerializerOptions.DefaultIgnoreCondition
+            = JsonIgnoreCondition.WhenWritingNull;
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -76,6 +92,7 @@ using (var scope = app.Services.CreateScope())
     var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
     // Ini memanggil seeder yang sudah Anda tulis:
     await UserSeeder.SeedAsync(db, hasher);
+    await ProductSeeder.SeedAsync(db);
 }
 
 // Enforce auth middleware

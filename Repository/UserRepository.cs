@@ -36,8 +36,8 @@ namespace Prodify.Repositories
             if (!string.IsNullOrEmpty(req.search))
             {
                 filter = Builders<User>.Filter.Or(
-                    Builders<User>.Filter.Regex(u => u.name, new MongoDB.Bson.BsonRegularExpression(req.search, "i")),
-                    Builders<User>.Filter.Regex(u => u.email, new MongoDB.Bson.BsonRegularExpression(req.search, "i"))
+                    Builders<User>.Filter.Regex(u => u.Name, new MongoDB.Bson.BsonRegularExpression(req.search, "i")),
+                    Builders<User>.Filter.Regex(u => u.Email, new MongoDB.Bson.BsonRegularExpression(req.search, "i"))
                 );
             }
 
@@ -48,7 +48,7 @@ namespace Prodify.Repositories
         public async Task<User> GetByEmailAsync(string email)
         {
             return await _users
-                .Find(u => u.email == email)
+                .Find(u => u.Email == email)
                 .FirstOrDefaultAsync();
         }
 
@@ -60,21 +60,21 @@ namespace Prodify.Repositories
         public async Task<User> GetByIdAsync(string id)
         {
             return await _users
-                .Find(u => u.id == id)
+                .Find(u => u.Id == id)
                 .FirstOrDefaultAsync();
         }
         public async Task UpdateAsync(User user)
         {
-            await _users.ReplaceOneAsync(u => u.id == user.id, user);
+            await _users.ReplaceOneAsync(u => u.Id == user.Id, user);
         }
         public async Task DeleteAsync(string id)
         {
-            await _users.DeleteOneAsync(u => u.id == id);
+            await _users.DeleteOneAsync(u => u.Id == id);
         }
         public async Task<bool> ExistsAsync(string email)
         {
             return await _users
-                .Find(u => u.email == email)
+                .Find(u => u.Email == email)
                 .AnyAsync();
         }
     }
