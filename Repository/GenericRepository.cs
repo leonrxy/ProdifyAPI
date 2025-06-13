@@ -15,6 +15,7 @@ public interface IRepository<T> where T : class
     Task UpdateAsync(T entity);
     Task DeleteAsync(string id);
     Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
+    Task<long> GetCountAsync();
 }
 
 public class GenericRepository<T> : IRepository<T> where T : class
@@ -64,4 +65,9 @@ public class GenericRepository<T> : IRepository<T> where T : class
 
     public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate) =>
         await _col.Find(predicate).AnyAsync();
+
+    public async Task<long> GetCountAsync()
+    {
+        return await _col.CountDocumentsAsync(Builders<T>.Filter.Empty);
+    }
 }

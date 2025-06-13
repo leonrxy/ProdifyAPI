@@ -12,7 +12,7 @@ namespace Prodify.Services
     public interface IProductService
     {
         Task<PaginatedResponseDto<ListDto>> GetPaginatedAsync(ProductPaginatedRequest request);
-        Task<Product> GetByIdAsync(string id);
+        Task<DetailDto> GetByIdAsync(string id);
         Task CreateAsync(CreateProductRequestDto request, string? adminId = null);
         Task UpdateAsync(string id, UpdateProductRequestDto request);
         Task DeleteAsync(string id);
@@ -49,12 +49,12 @@ namespace Prodify.Services
             return _mapper.Map<PaginatedResponseDto<ListDto>>(product);
         }
 
-        public async Task<Product> GetByIdAsync(string id)
+        public async Task<DetailDto> GetByIdAsync(string id)
         {
             var product = await _uow.Product.GetByIdAsync(id);
             if (product == null)
                 throw new KeyNotFoundException($"Product with id {id} not found");
-            return product;
+            return _mapper.Map<DetailDto>(product);
         }
 
         public async Task CreateAsync(CreateProductRequestDto request, string? adminId = null)
@@ -83,7 +83,7 @@ namespace Prodify.Services
 
         public async Task UpdateAsync(string id, UpdateProductRequestDto request)
         {
-            var product = await GetByIdAsync(id);
+            var product = await _uow.Product.GetByIdAsync(id);
             if (product == null)
                 throw new ArgumentException($"Product with id '{id}' not found");
             var updatedProduct = _mapper.Map(request, product);
