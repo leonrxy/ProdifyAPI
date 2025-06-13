@@ -1,7 +1,6 @@
 using Prodify.Models;
 using AutoMapper;
 using Prodify.Dtos.UserDto;
-using Prodify.Requests;
 using Prodify.Dtos;
 
 namespace Prodify.Mappers;
@@ -15,6 +14,7 @@ public class UserMapper : Profile
         CreateMap<User, SimpleDto>()
             .ReverseMap();
         CreateMap<User, CreateUserRequestDto>().ReverseMap();
+        CreateMap<User, UpdateUserRequestDto>().ReverseMap();
         CreateMap<PaginatedResponseDto<User>, PaginatedResponseDto<ListDto>>()
             .ForMember(dest => dest.items, opt => opt.MapFrom(src => src.items));
     }

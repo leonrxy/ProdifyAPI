@@ -1,12 +1,9 @@
-using BCrypt.Net;
-using MongoDB.Driver;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Prodify.Repositories;
-using Microsoft.AspNetCore.Identity;
 using Prodify.Helpers;
 using Prodify.Models;
 using Prodify.Dtos;
@@ -57,9 +54,9 @@ namespace Prodify.Services
 
             var user = new User
             {
-                email = email,
-                password = _hasher.Hash(password),
-                role = role
+                Email = email,
+                Password = _hasher.Hash(password),
+                Role = role
             };
 
             await _uow.User.CreateAsync(user);
@@ -71,14 +68,14 @@ namespace Prodify.Services
             var user = await _uow.User.GetByEmailAsync(email)
                        ?? throw new Exception("Invalid credentials");
 
-            if (!_hasher.Verify(password, user.password))
+            if (!_hasher.Verify(password, user.Password))
                 throw new Exception("Invalid credentials");
 
             // Buat JWT
             var claims = new[] {
-                new Claim(ClaimTypes.NameIdentifier, user.id),
-                new Claim(ClaimTypes.Email, user.email),
-                new Claim(ClaimTypes.Role, user.role)
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.SecretKey));
@@ -106,29 +103,29 @@ namespace Prodify.Services
         {
             var user = await _uow.User.GetByIdAsync(id);
             if (user == null)
-                throw new KeyNotFoundException($"User dengan id {id} tidak ditemukan");
+                throw new KeyNotFoundException($"User with id {id} not found");
             var userMap = _mapper.Map<DetailDto>(user);
             return userMap;
         }
 
         public async Task CreateAsync(CreateUserRequestDto request)
         {
-            var existing = await _users.FindAsync(u => u.email == request.email);
-            if (await _users.ExistsAsync(u => u.email == request.email))
+            var existing = await _users.FindAsync(u => u.Email == request.Email);
+            if (await _users.ExistsAsync(u => u.Email == request.Email))
                 throw new InvalidOperationException("Email sudah digunakan oleh user lain");
-            if (await _users.ExistsAsync(u => u.username == request.username))
+            if (await _users.ExistsAsync(u => u.Username == request.Username))
                 throw new InvalidOperationException("Username sudah digunakan oleh user lain");
 
             var user = new User
             {
-                id = ObjectId.GenerateNewId().ToString(),
-                name = request.name,
-                email = request.email,
-                username = request.username,
-                password = _hasher.Hash(request.password),
-                role = request.role,
-                created_at = DateTime.UtcNow,
-                updated_at = DateTime.UtcNow
+                Id = ObjectId.GenerateNewId().ToString(),
+                Name = request.Name,
+                Email = request.Email,
+                Username = request.Username,
+                Password = _hasher.Hash(request.Password),
+                Role = request.Role,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
 
             await _users.CreateAsync(user);
@@ -137,13 +134,14 @@ namespace Prodify.Services
         public async Task UpdateAsync(string id, UpdateUserRequestDto request)
         {
             var user = await _users.GetByIdAsync(id);
-            user.name = request.name;
-            user.email = request.email;
-            user.username = request.username;
-            user.role = request.role;
-            user.password = _hasher.Hash(request.password);
-            user.updated_at = DateTime.UtcNow;
-
+            if (user == null)
+                throw new KeyNotFoundException($"User dengan id {id} tidak ditemukan");
+            if (await _users.ExistsAsync(u => u.Email == request.Email && u.Id != id))
+                throw new InvalidOperationException("Email sudah digunakan oleh user lain");
+            if (await _users.ExistsAsync(u => u.Username == request.Username && u.Id != id))
+                throw new InvalidOperationException("Username sudah digunakan oleh user lain");
+            _mapper.Map(request, user);
+            user.UpdatedAt = DateTime.UtcNow;
             await _uow.User.UpdateAsync(user);
         }
 

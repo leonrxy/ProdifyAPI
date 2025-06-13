@@ -1,4 +1,4 @@
-namespace Prodify.Requests;
+namespace Prodify.Dtos;
 
 public abstract class PaginatedRequestDto
 {

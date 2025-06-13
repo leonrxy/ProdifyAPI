@@ -10,6 +10,7 @@ public interface IUnitOfWork : IDisposable
     IRepository<T> Repository<T>() where T : class;
 
     IUserRepository User { get; }
+    IProductRepository Product { get; }
 }
 
 
@@ -18,6 +19,7 @@ public class UnitOfWork : IUnitOfWork
     private readonly IMongoDatabase _db;
     private readonly ConcurrentDictionary<string, object> _repos = new();
     private IUserRepository? _users;
+    private IProductRepository? _products;
 
 
     public UnitOfWork(IMongoDatabase db)
@@ -34,6 +36,7 @@ public class UnitOfWork : IUnitOfWork
     }
 
     public IUserRepository User => _users ??= new UserRepository(_db);
+    public IProductRepository Product => _products ??= new ProductRepository(_db);
 
     public void Dispose() { /* nothing else to dispose */ }
 }

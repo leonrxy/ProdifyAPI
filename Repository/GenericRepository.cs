@@ -45,7 +45,7 @@ public class GenericRepository<T> : IRepository<T> where T : class
 
     public async Task UpdateAsync(T entity)
     {
-        var idProp = typeof(T).GetProperty("id")?.GetValue(entity)?.ToString()
+        var idProp = typeof(T).GetProperty("Id")?.GetValue(entity)?.ToString()
                       ?? throw new InvalidOperationException("Entity must have an Id property");
 
         var objId = ObjectId.Parse(idProp);

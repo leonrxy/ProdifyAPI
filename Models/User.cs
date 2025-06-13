@@ -4,23 +4,22 @@ using System;
 
 namespace Prodify.Models
 {
-
     public class User : BaseModel
     {
         [BsonElement("email")]
-        public string email { get; set; }
+        public string Email { get; set; }
 
         [BsonElement("username")]
-        public string username { get; set; }
+        public string Username { get; set; }
 
         [BsonElement("name")]
-        public string name { get; set; }
+        public string Name { get; set; }
 
         [BsonElement("password")]
-        public string password { get; set; }
+        public string Password { get; set; }
 
         [BsonElement("role")]
-        public string role { get; set; }
+        public string Role { get; set; }
 
     }
 }
