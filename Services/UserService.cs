@@ -11,6 +11,8 @@ using Prodify.Helpers;
 using Prodify.Models;
 using Prodify.Dtos;
 using MongoDB.Bson;
+using AutoMapper;
+using Prodify.Dtos.UserDto;
 
 namespace Prodify.Services
 {
@@ -19,10 +21,10 @@ namespace Prodify.Services
     {
         Task<User> RegisterAsync(string email, string password, string role);
         Task<string> AuthenticateAsync(string email, string password);
-        Task<PaginatedResponseDto<User>> GetPaginatedAsync(UserPaginatedRequest request);
-        Task<User> GetByIdAsync(string id);
-        Task<User> CreateAsync(CreateUserRequestDto request);
-        Task UpdateAsync(string id, CreateUserRequestDto request);
+        Task<PaginatedResponseDto<ListDto>> GetPaginatedAsync(UserPaginatedRequest request);
+        Task<DetailDto> GetByIdAsync(string id);
+        Task CreateAsync(CreateUserRequestDto request);
+        Task UpdateAsync(string id, UpdateUserRequestDto request);
         Task DeleteAsync(string id);
     }
 
@@ -32,16 +34,19 @@ namespace Prodify.Services
         private readonly JwtSettings _jwt;
         private readonly IPasswordHasher _hasher;
         private readonly IRepository<User> _users;
+        private readonly IMapper _mapper;
 
         public UserService(
             IUnitOfWork uow,
             IOptions<JwtSettings> jwtOptions,
-            IPasswordHasher hasher)
+            IPasswordHasher hasher,
+            IMapper mapper)
         {
             _uow = uow;
             _jwt = jwtOptions.Value;
             _hasher = hasher;
             _users = _uow.Repository<User>();
+            _mapper = mapper;
 
         }
 
@@ -90,24 +95,29 @@ namespace Prodify.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<PaginatedResponseDto<User>> GetPaginatedAsync(UserPaginatedRequest request)
+        public async Task<PaginatedResponseDto<ListDto>> GetPaginatedAsync(UserPaginatedRequest request)
         {
-            return await _uow.User.GetPaginatedAsync(request);
+            var user = await _uow.User.GetPaginatedAsync(request);
+            return _mapper.Map<PaginatedResponseDto<ListDto>>(user);
+
         }
 
-        public async Task<User> GetByIdAsync(string id)
+        public async Task<DetailDto> GetByIdAsync(string id)
         {
             var user = await _uow.User.GetByIdAsync(id);
             if (user == null)
                 throw new KeyNotFoundException($"User dengan id {id} tidak ditemukan");
-            return user;
+            var userMap = _mapper.Map<DetailDto>(user);
+            return userMap;
         }
 
-        public async Task<User> CreateAsync(CreateUserRequestDto request)
+        public async Task CreateAsync(CreateUserRequestDto request)
         {
             var existing = await _users.FindAsync(u => u.email == request.email);
             if (await _users.ExistsAsync(u => u.email == request.email))
                 throw new InvalidOperationException("Email sudah digunakan oleh user lain");
+            if (await _users.ExistsAsync(u => u.username == request.username))
+                throw new InvalidOperationException("Username sudah digunakan oleh user lain");
 
             var user = new User
             {
@@ -122,12 +132,11 @@ namespace Prodify.Services
             };
 
             await _users.CreateAsync(user);
-            return user;
         }
 
-        public async Task UpdateAsync(string id, CreateUserRequestDto request)
+        public async Task UpdateAsync(string id, UpdateUserRequestDto request)
         {
-            var user = await GetByIdAsync(id);
+            var user = await _users.GetByIdAsync(id);
             user.name = request.name;
             user.email = request.email;
             user.username = request.username;

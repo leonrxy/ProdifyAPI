@@ -1,31 +1,17 @@
 namespace Prodify.Dtos
 {
-    public class PaginatedResponsePropertyDto<T>
-    {
-        public int page_number { get; private set; }
-        public int total_pages { get; private set; }
-        public int page_size { get; private set; }
-        public int total_count { get; private set; }
-        public string first_page_url { get; private set; }
-        public string previous_page_url { get; private set; }
-        public string next_page_url { get; private set; }
-        public string last_page_url { get; private set; }
-        public bool has_previous_page => page_number > 1;
-        public bool has_next_page => page_number < total_pages;
-        public List<LinkDto> links { get; set; }
-        public List<T> items { get; private set; }
-    }
 
-    public class PaginatedResponseDto<T> : PaginatedResponsePropertyDto<T>
+    public class PaginatedResponseDto<T>
     {
-        public int page_number { get; private set; }
-        public int total_pages { get; private set; }
-        public int page_size { get; private set; }
-        public int total_count { get; private set; }
-        public string first_page_url { get; private set; }
-        public string previous_page_url { get; private set; }
-        public string next_page_url { get; private set; }
-        public string last_page_url { get; private set; }
+        public PaginatedResponseDto() { }
+        public int page_number { get; set; }
+        public int total_pages { get; set; }
+        public int page_size { get; set; }
+        public int total_count { get; set; }
+        public string first_page_url { get; set; }
+        public string previous_page_url { get; set; }
+        public string next_page_url { get; set; }
+        public string last_page_url { get; set; }
         public bool has_previous_page => page_number > 1;
         public bool has_next_page => page_number < total_pages;
         public List<LinkDto> links { get; set; }

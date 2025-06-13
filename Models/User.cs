@@ -5,12 +5,8 @@ using System;
 namespace Prodify.Models
 {
 
-    public class User
+    public class User : BaseModel
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string id { get; set; }
-
         [BsonElement("email")]
         public string email { get; set; }
 
@@ -25,18 +21,6 @@ namespace Prodify.Models
 
         [BsonElement("role")]
         public string role { get; set; }
-
-        [BsonElement("created_at")]
-        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-        public DateTime created_at { get; set; }
-
-        [BsonElement("updated_at")]
-        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-        public DateTime updated_at { get; set; }
-
-        [BsonElement("deleted_at")]
-        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-        public DateTime? deleted_at { get; set; }
 
     }
 }

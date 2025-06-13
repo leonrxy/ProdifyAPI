@@ -5,25 +5,20 @@ namespace Prodify.Common
         public static ApiResponse<T> Success<T>(T data, string message = "Success")
             => new ApiResponse<T>
             {
-                Status  = "success",
+                Status = "success",
                 Message = message,
-                Data    = data
+                Data = data
             };
 
-        public static ApiResponse<object> Success(string message = "Success")
-            => new ApiResponse<object>
-            {
-                Status  = "success",
-                Message = message,
-                Data    = null
-            };
+        public static ApiResponse<object> Success(string message)
+            => Success<object>(message);
 
         public static ApiResponse<object> Error(string message, string status = "error")
             => new ApiResponse<object>
             {
-                Status  = status,
+                Status = status,
                 Message = message,
-                Data    = null
+                Data = null
             };
     }
 }

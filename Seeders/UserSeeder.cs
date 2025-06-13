@@ -28,7 +28,7 @@ namespace Prodify.Seeders
                 username = "superadmin",
                 name = "Super Administrator",
                 password = hasher.Hash("superadmin123"),
-                role = "Superadmin",
+                role = "superadmin",
                 created_at = now,
                 updated_at = now
             };
@@ -40,7 +40,7 @@ namespace Prodify.Seeders
                 username = "admin",
                 name = "Administrator",
                 password = hasher.Hash("admin123"),
-                role = "Admin",
+                role = "admin",
                 created_at = now,
                 updated_at = now
             };
@@ -52,7 +52,7 @@ namespace Prodify.Seeders
                 username = "user",
                 name = "User",
                 password = hasher.Hash("user123"),
-                role = "User",
+                role = "user",
                 created_at = now,
                 updated_at = now
             };

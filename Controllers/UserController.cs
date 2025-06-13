@@ -8,7 +8,7 @@ using Prodify.Services;
 namespace Prodify.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/users")]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _service;
@@ -44,9 +44,8 @@ namespace Prodify.Controllers
         {
             try
             {
-                var user = await _service.CreateAsync(request);
-                return CreatedAtAction(nameof(GetById), new { id = user.id },
-                    ResponseFactory.Success(user, "User created successfully"));
+                await _service.CreateAsync(request);
+                return Ok(ResponseFactory.Success("User created successfully"));
             }
             catch (InvalidOperationException ex)
             {
@@ -55,12 +54,12 @@ namespace Prodify.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] CreateUserRequestDto request)
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateUserRequestDto request)
         {
             try
             {
                 await _service.UpdateAsync(id, request);
-                return Ok(ResponseFactory.Success<object>("User updated successfully"));
+                return Ok(ResponseFactory.Success("User updated successfully"));
             }
             catch (KeyNotFoundException ex)
             {
@@ -74,7 +73,7 @@ namespace Prodify.Controllers
             try
             {
                 await _service.DeleteAsync(id);
-                return Ok(ResponseFactory.Success<object>("User deleted successfully"));
+                return Ok(ResponseFactory.Success("User deleted successfully"));
             }
             catch (KeyNotFoundException ex)
             {

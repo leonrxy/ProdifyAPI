@@ -63,6 +63,9 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+
 var app = builder.Build();
 
 
