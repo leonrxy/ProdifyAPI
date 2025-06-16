@@ -2,9 +2,9 @@ using System.ComponentModel;
 using Swashbuckle.AspNetCore.Annotations;
 public class LoginRequestDto
 {
-    [Description("Email pengguna")]
+    [Description("Username atau Email")]
     [DefaultValue("admin@mail.com")]
-    public string Email { get; set; }
+    public string Username { get; set; }
 
     [Description("Password pengguna")]
     [DefaultValue("admin123")]
