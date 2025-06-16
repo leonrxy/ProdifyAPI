@@ -11,6 +11,7 @@ namespace Prodify.Repositories
     {
         Task<PaginatedResponseDto<User>> GetPaginatedAsync(UserPaginatedRequest request);
         Task<User> GetByEmailAsync(string email);
+        Task<User> GetByUsernameAsync(string username);
         Task CreateAsync(User user);
         Task<User> GetByIdAsync(string id);
         Task UpdateAsync(User user);
@@ -49,6 +50,13 @@ namespace Prodify.Repositories
         {
             return await _users
                 .Find(u => u.Email == email)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<User> GetByUsernameAsync(string username)
+        {
+            return await _users
+                .Find(u => u.Username == username)
                 .FirstOrDefaultAsync();
         }
 
